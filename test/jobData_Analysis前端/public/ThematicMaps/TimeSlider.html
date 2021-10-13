@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>TimeSlider widget | Sample | ArcGIS API for JavaScript 4.16</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.16/esri/themes/dark/main.css" />
+    <script src="https://js.arcgis.com/4.16/"></script>
+    <style>
+      html,body,#viewDiv {padding: 0;margin: 0;height: 100%;width: 100%;}
+			.esri-attribution{display: none;}
+			.esri-view .esri-view-surface--inset-outline:focus::after {outline: auto 0px Highlight !important;outline: auto 0px -webkit-focus-ring-color !important;}
+      #timeSlider {position: absolute;left: 1%;right: 0.25%;bottom: 0.5%;display:inline-block;}
+    </style>
+    <script>
+      require([
+        "esri/WebMap","esri/views/MapView","esri/layers/FeatureLayer",
+        "esri/widgets/TimeSlider","esri/widgets/Search","esri/widgets/Expand","esri/widgets/Legend","esri/widgets/Home",
+      ], function (WebMap, MapView, FeaturLayer, TimeSlider, Search, Expand, Legend, Home) {
+        const layer = new FeaturLayer({
+          //url:"https://services5.arcgis.com/OpFl5VJ2nf9GImPP/arcgis/rest/services/TimeSliderMap/FeatureServer",
+		  url:'http://localhost:6080/arcgis/rest/services/TimeSlider/MapServer',
+					title: null, outFields: ["*"],
+					popupTemplate: {
+					  title: "{CName}",
+					  content: [
+					    {
+					      type: "fields",
+					      fieldInfos: [
+							{fieldName: "JNAME",label: "职位名称"},
+							{fieldName: "EDUCATION",label: "学历要求"},
+							{fieldName: "SALARY",label: "薪资区间"},
+							{fieldName: "EXPERENCE",label: "工作经验"},
+							{fieldName: "CTYPE",label: "公司类型"},
+							{fieldName: "CSIZE",label: "公司规模"},
+							{fieldName: "INDUSTRY",label: "行业领域"},
+							{fieldName: "RECNUM",label: "招聘人数"},
+							{fieldName: "PUB_TIME",label: "发布时间"},
+					      ]
+					    }
+					  ]
+					}
+        });
+
+        const map = new WebMap({
+          portalItem: { id: "bf024b8d0b4b48f5a486070214e87c5f" },
+					logo:false, layers: [layer]
+        });
+
+        const view = new MapView({
+          map: map, container: 'viewDiv', zoom: 4.5, center: [120.75, 34.5]
+        });
+
+        // time slider widget initialization
+        const timeSlider = new TimeSlider({
+          container: "timeSlider", mode: "time-window", view: view
+        });
+        view.ui.add(timeSlider, "manual");
+        view.whenLayerView(layer).then(function (lv) {
+          const fullTimeExtent = layer.timeInfo.fullTimeExtent;
+          timeSlider.fullTimeExtent = fullTimeExtent;
+          timeSlider.stops = { interval: layer.timeInfo.interval };
+        });
+				
+				let search = new Search({ view: view });
+				view.ui.add(search, {
+					position: "top-left", index: 0
+				})
+
+        const legend = new Legend({ view: view });
+        const legendExpand = new Expand({
+          expandIconClass: "esri-icon-collection", expandTooltip: "Legend",
+          view: view, expanded: true, content: legend, expanded: false
+        });
+        view.ui.add(legendExpand, "top-left");
+				
+				let home = new Home({ view: view });
+				view.ui.add(home, { position: "top-left", })
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+    <div id="timeSlider"></div>
+    <!--
+      <div id="titleDiv" class="esri-widget">
+    <div id="titleText">Sea surface temperature</div>
+    </div> 
+    -->> 
+  </body>
+  </html>
+<!--
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>时序</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      body { margin: 0; padding: 0; }
+      #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    </style>
+
+
+  </head>
+
+  <body>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+    <style>
+      .mapboxgl-popup{
+        max-width: 500px;
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica,sans-serif;
+      }
+      .map-overlay {
+        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 25%;
+        top: 0;
+        left: 0;
+        padding: 10px;
+      }
+      .map-overlay input {
+        background-color: transparent;
+        display: inline-block;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        cursor: ew-resize;
+      }
+    </style>
+    <div id='map'></div>
+    <div class="map-overlay top">
+      <div class="map-overlay-inner">
+        <label id="month"></label>
+        <input id="slider" type="range" min="0" max="11" step="1" value="0">
+      </div>
+    </div>
+    
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoibXItZmFuZ2FvIiwiYSI6ImNrdWRneHhsODFhNWUycW1heThvZ3Jpc2YifQ.Vn63ovCsqYuuggh33vAiFg';
+      //地图容器
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/navigation-night-v1', // stylesheet location
+        center: [107, 39], // starting position [lng, lat]
+        zoom: 3.3 // starting zoom
+      });
+      var nav = new mapboxgl.NavigationControl({
+        "showCompass": true,
+        "showZoom":true
+      });
+      const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+      ];
+ 
+      function filterBy(month) {
+        const filters = ['==', 'month', month];
+        map.setFilter('earthquake-circles', filters);
+        map.setFilter('earthquake-labels', filters);
+        // Set the label to the month
+        document.getElementById('month').textContent = months[month];
+      }
+      map.addControl(nav, 'top-left');
+      map.addControl(new mapboxgl.FullscreenControl(), "top-right");
+      
+      /*检查浏览器是否支持全屏*/
+      function checkFullscreenSupport(){
+        return !!(
+          window.document.fullscreenEnabled ||
+          window.document.mozFullScreenEnabled ||
+          window.document.msFullscreenEnabled ||
+          window.document.webkitFullscreenEnabled
+          );
+      }
+    </script>
+       
+  </body>
+</html>
+-->
+
+

@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<!--职位学历统计-->
+<!--<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+		<link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/themes/dark/main.css">
+		<style>
+			html, body{height: 100%;width: 100%;margin: 0;padding: 0;}
+			body {background-color: #FFF;overflow: hidden;font-family: "Trebuchet MS", sans-serif;}
+			#viewDiv {padding: 0;margin: 0;height: 100%;width: 100%;}
+			#infoDiv {position: absolute;top: 15px;left: 60px;}
+			#infoDiv input {border: none;box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 2px;}
+			.esri-attribution{display: none;}
+			.esri-view .esri-view-surface--inset-outline:focus::after {outline: auto 0px Highlight !important;outline: auto 0px -webkit-focus-ring-color !important;}
+		</style>
+	</head>
+
+	<body>
+		<div id="viewDiv"></div>
+		<script src="./echarts3Layer/echarts3Extent.js"></script>
+		<script>
+			var package_path = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+				var dojoConfig = {
+					parseOnLoad: true,
+					packages: [{ "name": "src","location": package_path+"/echarts3Layer/" }]
+			};
+		</script>
+		<script src="https://js.arcgis.com/4.6/"></script>
+		<script>
+		var map,view, options=[];
+		require([
+			"esri/WebMap", 
+			'esri/views/MapView', 
+			"esri/views/SceneView", 
+			"esri/widgets/Search",
+			"esri/widgets/Home",
+			"esri/widgets/BasemapToggle",
+			"src/Echarts3Layer", 
+			"dojo/domReady!"], 
+			function (
+			WebMap, MapView, 
+			SceneView, Search, 
+			Home, BasemapToggle, Echarts3Layer) {
+			var switchButton = document.getElementById("switch-btn");
+			let map = new WebMap({
+				portalItem:{ id:"bf024b8d0b4b48f5a486070214e87c5f" }
+			});
+			view = new MapView({
+				map: map,
+				container: 'viewDiv',
+				scale: 9244648.86861805,1
+				center: [120.48053886017651, 31.235929042252014],
+				zoom: 8
+			})
+			let search = new Search({ view: view });
+			view.ui.add(search, { position: "top-left", index: 0 })
+			
+			let home = new Home({ view: view });
+			view.ui.add(home, { position: "top-left", })
+			
+			let basemapToggle = new BasemapToggle({view: view, nextBasemap: "streets-night-vector"});
+			view.ui.add(basemapToggle, "bottom-left");
+			
+			
+			var option1 = {
+				// title: {
+				// 	text: '职位学历统计专题图',
+				// 	left: 'center',
+				// 	textStyle: {
+				// 		color: '#ffffff'
+				// 	}
+				// },
+				tooltip: {
+					trigger: 'item',
+					formatter: '{a} <br/>{b} : {c} ({d}%)'
+				},
+				// 图表位置
+				grid: [
+					{lat:39.910924547299565,lon:116.4133836971231, width: '28px', height: '28px'},//北京
+					{lat:30.598466736400987,lon:114.31158155473231, width: '28px', height: '28px'},//武汉
+					{lat:31.235929042252014,lon:121.48053886017651, width: '28px', height: '28px'},//上海
+					{lat:32.06465288561847,lon:118.80242172124585, width: '28px', height: '28px'},//南京 	
+					{lat:23.135336306695006,lon:113.27143134445974, width: '28px', height: '28px'},//广州 	
+					{lat:22.548456637984177,lon:114.06455183658751, width: '28px', height: '28px'},//深圳 	
+					{lat:30.25308298169347,lon:120.21551180372168, width: '28px', height: '28px'},//杭州 
+					{lat:31.303564074441766,lon:120.59241222959322, width: '28px', height: '28px'},//苏州 
+					{lat:31.815795653327836,lon:119.98148471327892, width: '28px', height: '28px'},//常州 	
+					{lat:31.826577833686887,lon:117.23344266497664, width: '28px', height: '28px'},//合肥 	
+					{lat:31.498809732685714,lon:120.31858328810601, width: '28px', height: '28px'},//无锡 	 	
+					{lat:32.40067693609037,lon:119.41941890822997, width: '28px', height: '28px'},//扬州 			
+					{lat:30.750974830920143,lon:120.76355182586005, width: '28px', height: '28px'},//嘉兴 
+					{lat:29.866033045866054,lon:121.62857249434141, width: '28px', height: '28px'},//宁波 		
+					{lat:31.358536655799266,lon:118.43943137653523, width: '28px', height: '28px'},//芜湖 	
+					{lat:26.080429420698078,lon:119.30346983854001, width: '28px', height: '28px'},//福州 	
+					{lat:34.34726881662395,lon:108.94646555063274, width: '28px', height: '28px'},//西安
+					{lat:30.655821878416408,lon:104.08153351042463, width: '28px', height: '28px'},//成都 		
+					{lat:28.23488939994364,lon:112.94547319535287, width: '28px', height: '28px'},//长沙 	
+					{lat:34.75343885045448,lon:113.63141920733915, width: '28px', height: '28px'},//郑州
+					{lat:36.072227496663224,lon:120.38945519114627, width: '28px', height: '28px'},//青岛 	
+					{lat:36.64194066056572,lon:116.85330959689689, width: '28px', height: '28px'},//济南 	
+					{lat:31.98654943120089,lon:120.90159173866185, width: '28px', height: '28px'},//南通 		
+					{lat:37.87698902884778,lon:112.55639149167204, width: '28px', height: '28px'},//太原 
+					{lat:36.067234693545565,lon:103.84052119633628, width: '28px', height: '28px'},//兰州	
+					{lat:24.485406605176305,lon:118.09643549976651, width: '28px', height: '28px'},//厦门
+					{lat:23.02730841164339,lon:113.75842045787648, width: '28px', height: '28px'},//东莞	
+				],
+				series: [
+					{// 北京
+						name:'北京-学历占比', type:'pie', radius: '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true,textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:1283, name:'本科'}, {value:1, name:'大专以下'}, {value:4, name:'博士'}, {value:73, name:'硕士'}, {value:341, name:'大专'},
+						]
+					},
+					{// 武汉
+						name:'武汉-学历占比',type:'pie',radius : '28px',avoidLabelOverlap: false,
+						label: {
+							normal: {show: false,position: 'center'},
+							emphasis: {show: true,textStyle: {fontSize: '12',fontWeight: 'bold'}}
+						},
+						data:[
+							{value:1561, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:74, name:'硕士'},{value:441, name:'大专'},
+						]
+					},
+					{// 上海
+						name:'上海-学历占比',type:'pie',radius : '28px',avoidLabelOverlap: false,
+						label: {
+							normal: {show: false,position: 'center'},
+							emphasis: {show: true,textStyle: {fontSize: '12',fontWeight: 'bold'}}
+						},
+						data:[
+							{value:1083, name:'本科'},{value:11, name:'大专以下'},{value:1, name:'博士'},{value:38, name:'硕士'},{value:278, name:'大专'},
+						]
+					},
+					{// 南京
+						name:'南京-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:729, name:'本科'},{value:10, name:'大专以下'},{value:4, name:'博士'},{value:44, name:'硕士'},{value:192, name:'大专'},
+						]
+					},
+					{// 广州
+						name:'广州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:1408, name:'本科'},{value:12, name:'大专以下'},{value:4, name:'博士'},{value:104, name:'硕士'},{value:658, name:'大专'},
+						]
+					},
+					{// 深圳
+						name:'深圳-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:660, name:'本科'},{value:9, name:'大专以下'},{value:8, name:'博士'},{value:108, name:'硕士'},{value:239, name:'大专'},
+						]
+					},
+					{// 杭州
+						name:'杭州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:404, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:15, name:'硕士'},{value:165, name:'大专'},
+						]
+					},
+					{// 苏州
+						name:'苏州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:311, name:'本科'},{value:2, name:'大专以下'},{value:2, name:'博士'},{value:17, name:'硕士'},{value:90, name:'大专'},
+						]
+					},
+					{// 常州
+						name:'常州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:29, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:1, name:'硕士'},{value:16, name:'大专'},
+						]
+					},
+					{// 合肥
+						name:'合肥-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:174, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:42, name:'大专'},
+						]
+					},	
+					{// 无锡
+						name:'无锡-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:103, name:'本科'},{value:6, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:63, name:'大专'},
+						]
+					},
+					{// 扬州
+						name:'扬州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:10, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:4, name:'大专'},
+						]
+					},
+					{// 嘉兴
+						name:'嘉兴-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:59, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:8, name:'硕士'},{value:11, name:'大专'},
+						]
+					},
+					{// 宁波
+						name:'宁波-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:63, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:1, name:'硕士'},{value:25, name:'大专'},
+						]
+					},
+					{// 芜湖
+						name:'芜湖-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:15, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:1, name:'硕士'},{value:4, name:'大专'},
+						]
+					},
+					{// 福州
+						name:'福州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:153, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:4, name:'硕士'},{value:55, name:'大专'},
+						]
+					},
+					{// 西安
+						name:'西安-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:362, name:'本科'},{value:15, name:'大专以下'},{value:2, name:'博士'},{value:27, name:'硕士'},{value:94, name:'大专'},
+						]
+					},
+					{// 成都
+						name:'成都-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:649, name:'本科'},{value:7, name:'大专以下'},{value:1, name:'博士'},{value:25, name:'硕士'},{value:210, name:'大专'},
+						]
+					},
+					{// 长沙
+						name:'长沙-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:288, name:'本科'},{value:6, name:'大专以下'},{value:1, name:'博士'},{value:12, name:'硕士'},{value:249, name:'大专'},
+						]
+					},
+					{// 郑州
+						name:'郑州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:101, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:55, name:'大专'},
+						]
+					},
+					{// 青岛
+						name:'青岛-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:54, name:'本科'},{value:3, name:'大专以下'},{value:1, name:'博士'},{value:11, name:'硕士'},{value:37, name:'大专'},
+						]
+					},
+					{// 济南
+						name:'济南-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:119, name:'本科'},{value:3, name:'大专以下'},{value:1, name:'博士'},{value:9, name:'硕士'},{value:49, name:'大专'},
+						]
+					},
+					{// 南通
+						name:'南通-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:53, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:16, name:'大专'},
+						]
+					},
+					{// 太原
+						name:'太原-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:25, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:5, name:'大专'},
+						]
+					},
+					{// 兰州
+						name:'兰州-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:36, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:33, name:'大专'},
+						]
+					},
+					{// 厦门
+						name:'厦门-学历占比', type:'pie', radius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:56, name:'本科'},{value:1, name:'大专以下'},{value:1, name:'博士'},{value:2, name:'硕士'},{value:5, name:'大专'},
+						]
+					},
+					{// 东莞
+						name:'东莞-学历占比', type:'pie', rad`ius : '28px', avoidLabelOverlap: false,
+						label: {
+							normal: { show: false,position: 'center' },
+							emphasis: { show: true, textStyle: { fontSize: '12',fontWeight: 'bold' } }
+						},
+						data:[
+							{value:43, name:'本科'},{value:2, name:'大专以下'},{value:1, name:'博士'},{value:5, name:'硕士'},{value:18, name:'大专'},
+						]
+					},
+				]
+			};	
+			options.push(option1)
+			view.when(function(){ initChart() })
+			function initChart(){
+				options.forEach((option,index)=>{
+					var overlay = new Echarts3Layer(view, echarts,'chartId_'+index)
+					var chartsContainer = overlay.getEchartsContainer()
+					overlay.initECharts(chartsContainer)
+					overlay.setOption(option)			   
+				})
+			}
+		});
+		</script>
+	</body>
+</html>-->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.js'></script>
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v1.1.1/mapbox-gl.css' rel='stylesheet' />
+	<script src="./echarts3Layer/echarts3Extent.js"></script>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		#map {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js">
+	</script>
+	<link rel="stylesheet"
+		href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css"
+		type="text/css">
+	<style>
+		.geocoder {
+			position: absolute;
+			z-index: 1;
+			width: 25%;
+			left: 53%;
+			margin-left: -50%;
+			top: 20px;
+		}
+
+		.mapboxgl-ctrl-geocoder {
+			min-width: 100%;
+		}
+
+		#fit {
+			border: none;
+			border-radius: 2px;
+			height: 30px;
+			width: 30px;
+			text-align: center;
+			color: rgb(0, 0, 0);
+			background: #ffffff;
+			background-image: url('./2.png');
+		}
+	</style>
+
+	<div id="thematicMapDiv北京-学历占比"></div>
+	<div id="thematicMapDiv武汉-学历占比"></div>
+	<div id="thematicMapDiv上海-学历占比"></div>
+	<div id="thematicMapDiv南京-学历占比"></div>
+	<div id="thematicMapDiv广州-学历占比"></div>
+	<div id="thematicMapDiv深圳-学历占比"></div>
+	<div id="thematicMapDiv杭州-学历占比"></div>
+	<div id="thematicMapDiv苏州-学历占比"></div>
+	<div id="thematicMapDiv常州-学历占比"></div>
+	<div id="thematicMapDiv合肥-学历占比"></div>
+	<div id="thematicMapDiv无锡-学历占比"></div>
+	<div id="thematicMapDiv扬州-学历占比"></div>
+	<div id="thematicMapDiv嘉兴-学历占比"></div>
+	<div id="thematicMapDiv宁波-学历占比"></div>
+	<div id="thematicMapDiv芜湖-学历占比"></div>
+	<div id="thematicMapDiv福州-学历占比"></div>
+	<div id="thematicMapDiv西安-学历占比"></div>
+	<div id="thematicMapDiv成都-学历占比"></div>
+	<div id="thematicMapDiv长沙-学历占比"></div>
+	<div id="thematicMapDiv郑州-学历占比"></div>
+	<div id="thematicMapDiv青岛-学历占比"></div>
+	<div id="thematicMapDiv济南-学历占比"></div>
+	<div id="thematicMapDiv南通-学历占比"></div>
+	<div id="thematicMapDiv太原-学历占比"></div>
+	<div id="thematicMapDiv兰州-学历占比"></div>
+	<div id="thematicMapDiv厦门-学历占比"></div>
+	<div id="thematicMapDiv名称"></div>
+	<div id='map'></div>
+	<div id='geocoder' class='geocoder'></div>
+
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1IjoibXItZmFuZ2FvIiwiYSI6ImNrdWRneHhsODFhNWUycW1heThvZ3Jpc2YifQ.Vn63ovCsqYuuggh33vAiFg';
+		//地图容器
+		var map = new mapboxgl.Map({
+			container: 'map', // container id
+			style: 'mapbox://styles/mapbox/navigation-night-v1', // stylesheet location
+			center: [116.39, 39.9], // starting position [lng, lat]
+			zoom: 3.3 // starting zoom
+		});
+		var nav = new mapboxgl.NavigationControl({
+			"showCompass": true,
+			"showZoom": true
+		});
+		//搜索框
+		var geocoder = new MapboxGeocoder({
+			accessToken: mapboxgl.accessToken,
+			mapboxgl: mapboxgl
+		});
+		document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+		map.addControl(nav, 'top-left');
+		class HomeControl {
+			onAdd(map) {
+				this._map = map;
+				this._container = document.createElement('button');
+				this._container.className = 'mapboxgl-ctrl';
+				this._container.id = "fit"
+				return this._container;
+			}
+			onRemove() {
+				this._container.parentNode.removeChild(this._container);
+				this._map = undefined;
+			}
+		}
+		//home图标位置
+		map.addControl(new HomeControl(), "top-left");
+		map.addControl(new mapboxgl.FullscreenControl(), "top-right");
+		//home 显示的范围
+		document.getElementById('fit').addEventListener('click', () => {
+			map.fitBounds([
+				[130, 50], // 边界的西南角
+				[72, 21] // 边界的东北角
+			]);
+		});
+		/*检查浏览器是否支持全屏*/
+		function checkFullscreenSupport() {
+			return !!(
+				window.document.fullscreenEnabled ||
+				window.document.mozFullScreenEnabled ||
+				window.document.msFullscreenEnabled ||
+				window.document.webkitFullscreenEnabled
+			);
+		}
+
+		//初始化echart表
+		function initEchart(element, options) {
+			var mychart = echarts.init(element);
+			mychart.setOption(options);
+			return mychart;
+		}
+		window.onload = function () {
+			/**
+			 * 数据 */
+			data = [{
+					"id": "beijing",
+					"名称": "北京-学历占比",
+					"本科": 1283,
+					"大专以下": 1,
+					"博士": 4,
+					"硕士": 73,
+					"大专": 341,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								116.4133836971231,
+								39.910924547299565
+							]
+						}
+					}
+				},
+				{
+					"id": "dongguan",
+					"名称": "东莞-学历占比",
+					"本科": 43,
+					"大专以下": 2,
+					"博士": 1,
+					"硕士": 5,
+					"大专": 18,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								113.75842045787648,
+								23.02730841164339
+							]
+						}
+					}
+				},
+				{
+					"id": "guangzhou",
+					"名称": "广州-学历占比",
+					"本科": 1408,
+					"大专以下": 12,
+					"博士": 4,
+					"硕士": 104,
+					"大专": 658,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								113.27143134445974,
+								23.135336306695006
+							]
+						}
+					}
+				},
+				{
+					"id": "shenzhen",
+					"名称": "深圳-学历占比",
+					"本科": 660,
+					"大专以下": 9,
+					"博士": 8,
+					"硕士": 108,
+					"大专": 239,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								114.06455183658751,
+								22.548456637984177
+							]
+						}
+					}
+				},
+				{
+					"id": "hangzhou",
+					"名称": "杭州-学历占比",
+					"本科": 404,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 15,
+					"大专": 165,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								120.21551180372168,
+								30.25308298169347
+							]
+						}
+					}
+				},
+				{
+					"id": "suzhou",
+					"名称": "苏州-学历占比",
+					"本科": 311,
+					"大专以下": 2,
+					"博士": 2,
+					"硕士": 17,
+					"大专": 90,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								120.59241222959322,
+								31.303564074441766
+							]
+						}
+					}
+				},
+				{
+					"id": "changzhou",
+					"名称": "常州-学历占比",
+					"本科": 29,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 1,
+					"大专": 16,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								119.98148471327892,
+								31.815795653327836
+							]
+						}
+					}
+				},
+				{
+					"id": "hefei",
+					"名称": "合肥-学历占比",
+					"本科": 174,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 42,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								117.23344266497664,
+								31.826577833686887
+							]
+						}
+					}
+				},
+				{
+					"id": "wuhan",
+					"名称": "武汉-学历占比",
+					"本科": 1561,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 74,
+					"大专": 441,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								114.31158155473231,
+								30.598466736400987
+							]
+						}
+					}
+				},
+				{
+					"id": "shanghai",
+					"名称": "上海-学历占比",
+					"本科": 1083,
+					"大专以下": 11,
+					"博士": 1,
+					"硕士": 38,
+					"大专": 278,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								121.48053886017651,
+								31.235929042252014
+							]
+						}
+					}
+				},
+				{
+					"id": "nanjing",
+					"名称": "南京-学历占比",
+					"本科": 729,
+					"大专以下": 10,
+					"博士": 4,
+					"硕士": 44,
+					"大专": 1192,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								118.80242172124585,
+								32.06465288561847
+							]
+						}
+					}
+				},
+				{
+					"id": "wuxi",
+					"名称": "无锡-学历占比",
+					"本科": 103,
+					"大专以下": 6,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 63,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								120.31858328810601,
+								31.498809732685714
+							]
+						}
+					}
+				},
+				{
+					"id": "yangzhou",
+					"名称": "扬州-学历占比",
+					"本科": 10,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 4,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								119.41941890822997,
+								32.40067693609037
+							]
+						}
+					}
+				},
+				{
+					"id": "jiaxing",
+					"名称": "嘉兴-学历占比",
+					"本科": 59,
+					"大专以下": 8,
+					"博士": 1,
+					"硕士": 1,
+					"大专": 11,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								120.76355182586005,
+								30.750974830920143
+							]
+						}
+					}
+				},
+				{
+					"id": "ningbo",
+					"名称": "宁波-学历占比",
+					"本科": 63,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 1,
+					"大专": 25,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								121.62857249434141,
+								29.866033045866054
+							]
+						}
+					}
+				},
+				{
+					"id": "wuhu",
+					"名称": "芜湖-学历占比",
+					"本科": 15,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 1,
+					"大专": 4,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								118.43943137653523,
+								31.358536655799266
+							]
+						}
+					}
+				},
+				{
+					"id": "fuzhou",
+					"名称": "福州-学历占比",
+					"本科": 153,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 4,
+					"大专": 55,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								119.30346983854001,
+								26.080429420698078
+							]
+						}
+					}
+				},
+				{
+					"id": "xian",
+					"名称": "西安-学历占比",
+					"本科": 362,
+					"大专以下": 15,
+					"博士": 2,
+					"硕士": 27,
+					"大专": 94,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								108.94646555063274,
+								34.34726881662395
+							]
+						}
+					}
+				},
+				{
+					"id": "chengdu",
+					"名称": "成都-学历占比",
+					"本科": 649,
+					"大专以下": 7,
+					"博士": 1,
+					"硕士": 25,
+					"大专": 210,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								104.08153351042463,
+								30.655821878416408
+							]
+						}
+					}
+				},
+				{
+					"id": "changsha",
+					"名称": "长沙-学历占比",
+					"本科": 288,
+					"大专以下": 6,
+					"博士": 1,
+					"硕士": 12,
+					"大专": 249,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								112.94547319535287,
+								28.23488939994364
+							]
+						}
+					}
+				},
+				{
+					"id": "zhengzhou",
+					"名称": "郑州-学历占比",
+					"本科": 101,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 55,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								113.63141920733915,
+								34.75343885045448
+							]
+						}
+					}
+				},
+				{
+					"id": "qingdao",
+					"名称": "青岛-学历占比",
+					"本科": 54,
+					"大专以下": 3,
+					"博士": 1,
+					"硕士": 11,
+					"大专": 37,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								120.38945519114627,
+								36.072227496663224
+							]
+						}
+					}
+				},
+				{
+					"id": "jinan",
+					"名称": "济南-学历占比",
+					"本科": 119,
+					"大专以下": 3,
+					"博士": 1,
+					"硕士": 9,
+					"大专": 49,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								116.85330959689689,
+								36.64194066056572
+							]
+						}
+					}
+				},
+				{
+					"id": "nantong",
+					"名称": "南通-学历占比",
+					"本科": 53,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 16,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								120.90159173866185,
+								31.98654943120089
+							]
+						}
+					}
+				},
+				{
+					"id": "taiyuan",
+					"名称": "太原-学历占比",
+					"本科": 25,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 5,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								112.55639149167204,
+								37.87698902884778
+							]
+						}
+					}
+				},
+				{
+					"id": "lanzhou",
+					"名称": "兰州-学历占比",
+					"本科": 36,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 33,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								103.84052119633628,
+								36.067234693545565
+							]
+						}
+					}
+				},
+				{
+					"id": "xiamen",
+					"名称": "厦门-学历占比",
+					"本科": 56,
+					"大专以下": 1,
+					"博士": 1,
+					"硕士": 2,
+					"大专": 5,
+					"GEOJSON": {
+						"type": "Feature",
+						"properties": {},
+						"geometry": {
+							"type": "Point",
+							"coordinates": [
+								118.09643549976651,
+								24.485406605176305
+							]
+						}
+					}
+				}
+			]
+			window.echartMapPoints = [];
+			window.echartInitLists = [];
+			// 遍历数组
+			data.forEach(item => {
+				/**
+				 * 动态生成html元素 */
+				const htmlDivElement = document.createElement("div");
+				htmlDivElement.style = "height:100px;width:100px;";
+				const geojson = item.GEOJSON;
+				// 使用mapboxgl.Marker 根据经纬度将html元素加载至浏览器指定位置
+				window.echartMapPoints.push(new mapboxgl.Marker(htmlDivElement, {
+						//offset: [-50 / 2, -50 / 2]
+					})
+					.setLngLat([
+						geojson.geometry.coordinates[0],
+						geojson.geometry.coordinates[1]
+					])
+					.addTo(window.map));
+					// 遍历数据，生成每一个饼图
+				const d = Object.keys(item).filter(curr => typeof item[curr] === 'number').map(current => ({
+					name: current,
+					value: item[current]
+				}))
+				const option1 = {
+					tooltip: {
+						trigger: 'item',
+						formatter: '{a} <br/>{b} : {c} ({d}%)'
+					},
+					series: {
+						name: item.名称,
+						type: "pie",
+						data: d,
+						radius: '28px',
+						avoidLabelOverlap: false,
+						label: {
+							normal: {
+								show: false,
+								position: 'center'
+							},
+							emphasis: {
+								show: true,
+								textStyle: {
+									fontSize: '12',
+									fontWeight: 'bold'
+								}
+							}
+						}
+					}
+				};
+				window.echartInitLists.push(initEchart(htmlDivElement, option1));
+			})
+
+		}
+
+		//清除echart及marker
+		function clearEchartInstantAndPoint() {
+			window.echartInitLists.forEach(echartItem => {
+				echartItem.dispose();
+			});
+			window.echartMapPoints.forEach(pointItem => {
+				pointItem.remove();
+			});
+		}
+	</script>
+
+</body>
+
+</html>

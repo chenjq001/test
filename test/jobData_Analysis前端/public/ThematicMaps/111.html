@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script include="mapboxgl" src="./js/include-mapboxgl-local.js"></script>
+    <!-- <link href="https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css" rel="stylesheet" /> -->
+  </head>
+
+  <body>
+    <div id="map" style="width: 100%; height: 700px">
+      <div id="mouse-position"></div>
+    </div>
+    <script type="text/javascript">
+      /** 地图初始化
+       */
+      init();
+      function init() {
+        "use strict";
+        //地图容器
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid3VqaW5odWkwIiwiYSI6ImNrdDFoZWphNDBhaGszMXBoazZ1dWdwMWkifQ.AX5nvyCpK8yKsCqyz36rsw' // 你的accessToken
+        var map = new mapboxgl.Map({
+          container: "map",
+          minZoom: 3,
+          zoom: 9,
+          center: [116.39, 39.9],
+          style: 'mapbox://styles/mapbox/streets-v11'
+        });
+        var navigationControl = new mapboxgl.NavigationControl();
+        map.addControl(navigationControl, "top-left");
+        // var { protocol, ip, port } = window.webclient;
+        // setTimeout(() => {
+        //   var docLayer = new mapboxgl.Zondy.Map.MapDocLayer("热力图", {
+        //     ip: "110.40.187.212",
+        //     port: "6163",
+        //     //只显示一个图层,不平铺显示
+        //     noWrap: true,
+        //     serverType: "doc",
+        //     tileSize: 512,
+        //   });
+        //   docLayer.addToMap(map);
+        // }, 5000);
+      }
+    </script>
+  </body>
+</html>
